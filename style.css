@@ -1,0 +1,251 @@
+:root {
+    --bg-dark: #121212;
+    --panel-dark: #1e1e1e;
+    --pv-red: #b30000;
+    --pv-bg: #4a0000;
+    --pm-blue: #008ba3;
+    --pm-bg: #003d47;
+    --text-color: #ffffff;
+    --accent: #f1c40f;
+}
+
+body {
+    background-color: var(--bg-dark);
+    color: var(--text-color);
+    font-family: 'Segoe UI', sans-serif;
+    margin: 0;
+    padding: 20px;
+    display: flex;
+    justify-content: center;
+}
+
+.ficha-container {
+    background-color: var(--panel-dark);
+    width: 100%;
+    max-width: 700px;
+    padding: 25px;
+    border: 1px solid #333;
+    border-radius: 4px;
+}
+
+/* Header e Pontos */
+.header-grid { display: grid; grid-template-columns: 2fr 2fr 1.5fr; gap: 15px; margin-bottom: 25px; }
+.input-group label { display: block; font-size: 0.75em; color: #aaa; margin-bottom: 5px; }
+.highlight #total-pontos { font-size: 1.5em; font-weight: bold; color: var(--accent); }
+
+/* Características */
+.stats { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; margin-bottom: 30px; }
+.stat-box label { display: block; text-align: center; font-size: 0.7em; margin-bottom: 5px; }
+.attr-input { width: 100%; text-align: center; font-size: 1.2em; background: #000; border: 1px solid #444; color: white; padding: 5px 0; }
+
+/* Barras Estilo RPG Online */
+.bar-container { margin-bottom: 20px; text-align: center; }
+.bar-title { font-size: 0.8em; font-weight: bold; color: #ccc; display: block; margin-bottom: 5px; }
+
+.bar-wrapper {
+    position: relative;
+    height: 40px;
+    background-color: #111;
+    border: 1px solid #555;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+}
+
+.bar-fill {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 100%;
+    transition: width 0.3s ease;
+    z-index: 1;
+}
+
+.pv-color { background-color: var(--pv-red); }
+.pm-color { background-color: var(--pm-blue); }
+
+.bar-controls {
+    position: relative;
+    z-index: 2;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 10px;
+}
+
+.bar-controls button {
+    background: transparent;
+    border: none;
+    color: white;
+    font-size: 1.5em;
+    cursor: pointer;
+    padding: 0 10px;
+}
+
+.bar-controls button:hover { color: var(--accent); }
+#pv-display, #pm-display { font-weight: bold; font-size: 1.1em; text-shadow: 1px 1px 2px #000; }
+
+/* Áreas de Texto */
+.info-grid .box { margin-bottom: 15px; }
+.info-grid label { display: block; color: var(--accent); margin-bottom: 5px; font-size: 0.9em; }
+textarea, input[type="text"] { width: 100%; background: #252525; border: 1px solid #444; color: white; padding: 8px; box-sizing: border-box; }
+.flex-row { display: flex; gap: 15px; }
+.small { width: 50%; }
+
+.bar-controls input {
+    width: 50px;
+    text-align: center;
+    background: #000;
+    border: 1px solid #444;
+    color: white;
+    font-weight: bold;
+}
+
+/* Seção de Perícias Estilo Imagem */
+.skills-container {
+    background: #0a0a0a;
+    padding: 15px;
+    border-radius: 4px;
+    margin-bottom: 25px;
+    border: 1px solid #333;
+}
+
+.skills-header {
+    display: grid;
+    grid-template-columns: 3fr 1fr;
+    font-size: 0.7em;
+    font-weight: bold;
+    color: #888;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #222;
+    text-align: center;
+}
+
+.header-name { text-align: left; padding-left: 25px; }
+
+.skill-row {
+    display: grid;
+    grid-template-columns: 3fr 1fr;
+    align-items: center;
+    padding: 5px 0;
+    border-bottom: 1px solid #1a1a1a;
+    transition: background 0.2s;
+}
+
+.skill-row:hover { background: #151515; }
+
+.skill-name {
+    color: #4a90e2; /* Azul claro */
+    font-weight: 500;
+    font-size: 0.9em;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.d20-icon {
+    color: #fff;
+    font-size: 1.2em;
+    opacity: 0.7;
+}
+
+.skill-attr {
+    color: #2ecc71; /* Verde */
+    font-size: 0.85em;
+    text-align: center;
+}
+
+.skill-input {
+    display: flex;
+    justify-content: center;
+}
+
+.skill-input input {
+    width: 40px;
+    background: transparent;
+    border: none;
+    border-bottom: 1px solid #444;
+    color: #2ecc71;
+    text-align: center;
+    font-size: 1em;
+    padding: 2px;
+}
+
+.skill-input input:focus {
+    border-bottom-color: var(--accent);
+    outline: none;
+}
+
+/* Valor de Treino com linha sublinhada igual à imagem */
+.training-val input {
+    color: #4a90e2;
+    border-bottom: 2px solid #254b7a;
+}
+
+/* Estilos do Modal */
+.modal {
+    display: none; /* Escondido por padrão */
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.8); /* Fundo escurecido */
+    align-items: center;
+    justify-content: center;
+}
+
+.modal-content {
+    background-color: #1e1e1e;
+    padding: 20px;
+    border-radius: 8px;
+    width: 90%;
+    max-width: 500px;
+    border: 1px solid #333;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #333;
+    margin-bottom: 15px;
+    padding-bottom: 10px;
+}
+
+#modal-title {
+    margin: 0;
+    color: var(--text-color);
+    font-size: 1.5em;
+}
+
+.close-btn {
+    font-size: 28px;
+    font-weight: bold;
+    color: #888;
+    cursor: pointer;
+}
+
+.close-btn:hover {
+    color: var(--accent);
+}
+
+.modal-body {
+    line-height: 1.6;
+    color: #ccc;
+    font-size: 0.95em;
+}
+
+.modal-body b {
+    color: #4a90e2; /* Cor azul para destaques de regras */
+}
+
+/* Efeito de hover no nome da perícia */
+.skill-name:hover {
+    text-decoration: underline;
+    filter: brightness(1.2);
+}
+
