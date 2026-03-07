@@ -3,29 +3,30 @@ let stats = {
     pm: { current: 5, max: 5 }
 };
 
+// Seletores fixos
 const attrInputs = document.querySelectorAll('.attr-input');
 const resInput = document.getElementById('res-input');
 const totalPontosSpan = document.getElementById('total-pontos');
-
 const pvCurrentInput = document.getElementById("pv-current");
 const pmCurrentInput = document.getElementById("pm-current");
-
-const trainingInputs = document.querySelectorAll(".training-val input");
 
 function updateAll() {
 
     let total = 0;
 
-    // Soma atributos
+    // 1. Soma atributos
     attrInputs.forEach(input => {
         total += parseInt(input.value) || 0;
     });
 
-    // Soma perícias
+    // 2. Soma perícias
+    const trainingInputs = document.querySelectorAll(".training-val input");
+
     trainingInputs.forEach(input => {
 
         let val = parseInt(input.value) || 0;
 
+        // Limita entre 0 e 2
         if (val < 0) val = 0;
         if (val > 2) val = 2;
 
@@ -33,39 +34,41 @@ function updateAll() {
 
         total += val;
 
-        // cores
+        const row = input.closest('.skill-row');
+        const name = row ? row.querySelector('.skill-name') : null;
+
+        // Cores
         if (val === 1) {
-            input.style.color = "#2ecc71"; // verde
-        }
+            input.style.color = "#2ecc71";
+            if (name) name.style.color = "#2ecc71";
+        } 
         else if (val === 2) {
-            input.style.color = "#4a90e2"; // azul
-        }
+            input.style.color = "#4a90e2";
+            if (name) name.style.color = "#4a90e2";
+        } 
         else {
             input.style.color = "#777";
+            if (name) name.style.color = "#4a90e2";
         }
 
     });
 
     totalPontosSpan.textContent = total;
 
-    // PV e PM
+    // 3. Cálculo de PV e PM
     const res = parseInt(resInput.value) || 0;
     const novoMax = 5 + (res * 5);
 
-    const diffPV = novoMax - stats.pv.max;
-    const diffPM = novoMax - stats.pm.max;
+    const diff = novoMax - stats.pv.max;
 
     stats.pv.max = novoMax;
     stats.pm.max = novoMax;
 
-    stats.pv.current += diffPV;
-    stats.pm.current += diffPM;
+    stats.pv.current = (parseInt(pvCurrentInput.value) || 0) + diff;
+    stats.pm.current = (parseInt(pmCurrentInput.value) || 0) + diff;
 
-    if (stats.pv.current < 0) stats.pv.current = 0;
-    if (stats.pm.current < 0) stats.pm.current = 0;
-
-    if (stats.pv.current > stats.pv.max) stats.pv.current = stats.pv.max;
-    if (stats.pm.current > stats.pm.max) stats.pm.current = stats.pm.max;
+    stats.pv.current = Math.min(Math.max(0, stats.pv.current), stats.pv.max);
+    stats.pm.current = Math.min(Math.max(0, stats.pm.current), stats.pm.max);
 
     pvCurrentInput.value = stats.pv.current;
     pmCurrentInput.value = stats.pm.current;
@@ -78,8 +81,8 @@ function renderBars() {
     stats.pv.current = parseInt(pvCurrentInput.value) || 0;
     stats.pm.current = parseInt(pmCurrentInput.value) || 0;
 
-    if (stats.pv.current > stats.pv.max) stats.pv.current = stats.pv.max;
-    if (stats.pm.current > stats.pm.max) stats.pm.current = stats.pm.max;
+    stats.pv.current = Math.min(Math.max(0, stats.pv.current), stats.pv.max);
+    stats.pm.current = Math.min(Math.max(0, stats.pm.current), stats.pm.max);
 
     pvCurrentInput.value = stats.pv.current;
     pmCurrentInput.value = stats.pm.current;
@@ -96,70 +99,43 @@ function renderBars() {
 
 function changeCurrent(type, amount) {
 
-    stats[type].current += amount;
+    if (type === "pv") {
+        pvCurrentInput.value = (parseInt(pvCurrentInput.value) || 0) + amount;
+    }
 
-    if (stats[type].current < 0) stats[type].current = 0;
-    if (stats[type].current > stats[type].max) stats[type].current = stats[type].max;
-
-    if (type === "pv") pvCurrentInput.value = stats[type].current;
-    if (type === "pm") pmCurrentInput.value = stats[type].current;
+    if (type === "pm") {
+        pmCurrentInput.value = (parseInt(pmCurrentInput.value) || 0) + amount;
+    }
 
     renderBars();
 }
 
-// Eventos atributos
-attrInputs.forEach(input => {
-    input.addEventListener('input', updateAll);
-});
-
-// Eventos perícias
-trainingInputs.forEach(input => {
-    input.addEventListener("input", updateAll);
-});
-
-// Atualizar quando digitar PV ou PM
-pvCurrentInput.addEventListener("input", renderBars);
-pmCurrentInput.addEventListener("input", renderBars);
-
-// Descrições das Perícias (Baseadas no 3D&T Alpha)
-const skillDescriptions = {
-    "Animais": "Você sabe lidar com criaturas. Inclui cavalgar, treinar animais e entender comportamentos selvagens.",
-    "Arte": "Você sabe se expressar através de música, dança, escrita ou artes visuais. <br><br><b>Uso Comum:</b> Impressionar plateias ou identificar obras valiosas.",
-    "Ciencia": "Representa conhecimento acadêmico. Física, química, biologia, história ou arqueologia. Permite entender fenômenos naturais e tecnológicos.",
-    "Crime": "Habilidades ilegais como arrombamento, furto, falsificação e infiltração sem ser notado.",
-    "Esporte": "Capacidades atléticas além do comum. Inclui natação, escalada, parkour e competições esportivas.",
-    "Idiomas": "Capacidade de falar, ler e escrever línguas estrangeiras, além de decifrar códigos e escritas antigas.",
-    "Investigação": "Você é bom em encontrar pistas, deduzir eventos através de evidências e vigilância.",
-    "Maquinas": "Habilidade para consertar aparelhos eletrônicos, pilotar veículos complexos e hackear sistemas simples.",
-    "Manipulação": "Sua lábia é poderosa. Inclui persuadir, enganar, intimidar ou seduzir pessoas para obter informações ou favores.",
-    "Medicina": "Capacidade de curar ferimentos, diagnosticar doenças e realizar cirurgias. Fundamental para recuperar PVs.",
-    "Sobrevivencia": "Habilidade para caçar, rastrear, encontrar água e navegar em ambientes selvagens ou hostis."
-};
-
-// Funções do Modal
+// Modal
 function showSkillDescription(skillName) {
-    const modal = document.getElementById("skill-modal");
-    const title = document.getElementById("modal-title");
-    const body = document.getElementById("modal-body");
 
-    title.innerText = skillName;
-    body.innerHTML = skillDescriptions[skillName] || "Descrição não disponível para esta perícia.";
+    const modal = document.getElementById("skill-modal");
+
+    document.getElementById("modal-title").innerText = skillName;
+
+    document.getElementById("modal-body").innerHTML =
+        skillDescriptions[skillName] || "Descrição não encontrada.";
 
     modal.style.display = "flex";
 }
 
 function closeModal() {
-    const modal = document.getElementById("skill-modal");
-    modal.style.display = "none";
+    document.getElementById("skill-modal").style.display = "none";
 }
 
-// Fechar modal ao clicar fora da caixa preta
-window.onclick = function(event) {
-    const modal = document.getElementById("skill-modal");
-    if (event.target == modal) {
-        closeModal();
-    }
-}
+// Listeners
+attrInputs.forEach(input => input.addEventListener('input', updateAll));
+
+pvCurrentInput.addEventListener("input", renderBars);
+pmCurrentInput.addEventListener("input", renderBars);
+
+window.onclick = (e) => {
+    if (e.target.classList.contains('modal')) closeModal();
+};
 
 // Inicialização
 updateAll();
