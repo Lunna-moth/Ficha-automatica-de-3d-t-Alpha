@@ -249,3 +249,173 @@ textarea, input[type="text"] { width: 100%; background: #252525; border: 1px sol
     filter: brightness(1.2);
 }
 
+/* Cabeçalho das caixas com botão + */
+.box-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.btn-add {
+    background-color: #a100ff; /* Roxo da imagem */
+    color: white;
+    border: none;
+    border-radius: 4px;
+    width: 25px;
+    height: 25px;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 1.2em;
+    transition: transform 0.2s, background 0.2s;
+}
+
+.btn-add:hover {
+    background-color: #bc3dff;
+    transform: scale(1.1);
+}
+
+/* Estilo do Item Dinâmico */
+.item-row {
+    background: #1a1a1a;
+    border: 1px solid #333;
+    padding: 10px;
+    border-radius: 4px;
+    margin-bottom: 8px;
+    display: grid;
+    grid-template-columns: 1fr 60px 30px;
+    gap: 10px;
+}
+
+.item-row input {
+    background: transparent;
+    border: none;
+    border-bottom: 1px solid #444;
+    color: white;
+    padding: 5px;
+}
+
+.item-cost {
+    color: var(--accent) !important;
+    text-align: center;
+    font-weight: bold;
+}
+
+.item-desc {
+    grid-column: span 3;
+    background: #111 !important;
+    font-size: 0.85em;
+    margin-top: 5px;
+}
+
+.btn-remove {
+    background: transparent;
+    border: none;
+    color: #ff4d4d;
+    cursor: pointer;
+    font-size: 1.2em;
+}
+
+.btn-remove:hover { color: #ff0000; }
+
+/* Container dos itens salvos */
+.dynamic-list { margin-top: 10px; }
+
+.item-accordion {
+    background: #1a1a1a;
+    border: 1px solid #333;
+    border-radius: 4px;
+    margin-bottom: 5px;
+    overflow: hidden;
+}
+
+/* Cabeçalho do Item Salvo */
+.item-header {
+    padding: 10px 15px;
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.item-header:hover { background: #252525; }
+
+.item-header .arrow {
+    color: #a100ff; /* Roxo da imagem */
+    margin-right: 10px;
+    font-size: 0.8em;
+    transition: transform 0.3s;
+}
+
+.item-header.active .arrow { transform: rotate(180deg); }
+
+.item-header .item-title {
+    font-weight: bold;
+    flex-grow: 1;
+}
+
+.item-header .item-cost-display {
+    color: var(--accent);
+    font-size: 0.9em;
+}
+
+/* Conteúdo Expandido */
+.item-content {
+    display: none;
+    padding: 15px;
+    border-top: 1px solid #333;
+    background: #111;
+}
+
+.item-description-text {
+    font-size: 0.9em;
+    color: #ccc;
+    line-height: 1.4;
+    margin-bottom: 15px;
+    white-space: pre-wrap; /* Mantém quebras de linha */
+}
+
+/* Rodapé do Accordion (Botões) */
+.item-footer {
+    display: flex;
+    justify-content: space-between;
+    border-top: 1px solid #222;
+    padding-top: 10px;
+}
+
+.btn-action-remove { color: #ff4d4d; background: none; border: none; cursor: pointer; }
+.btn-action-edit { color: #2ecc71; background: none; border: none; cursor: pointer; }
+
+/* Estilo do formulário de edição (enquanto você escreve) */
+.item-form {
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    background: #252525;
+}
+
+.btn-save-item {
+    background: #a100ff;
+    color: white;
+    border: none;
+    padding: 5px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+select {
+    width: 100%;
+    background: #252525;
+    border: 1px solid #444;
+    color: white;
+    padding: 8px;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+select:focus {
+    border-color: var(--accent);
+    outline: none;
+}
