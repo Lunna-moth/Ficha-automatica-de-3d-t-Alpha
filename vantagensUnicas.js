@@ -1,25 +1,37 @@
 const listaVantagensUnicas = {
-    "Humano": {
+
+    Humano: {
         custo: 0,
-        descricao: "Humanos são versáteis e ambiciosos.",
-        traits: [] // Humanos não ganham nada automático no 3D&T base
+        traits: []
     },
-    "Anão": {
+
+    Anao: {
         custo: 1,
-        descricao: "Anões são robustos e ótimos ferreiros.",
         traits: [
-            { nome: "Infravisão", custo: 0, tipo: "vantagem", desc: "Enxerga no escuro." },
-            { nome: "Resistência à Magia", custo: 0, tipo: "vantagem", desc: "Testes de Resistência +1 contra magia." },
-            { nome: "Inimigos (Orcs e Trolls)", custo: 0, tipo: "desvantagem", desc: "H+1 contra eles, mas ódio profundo." }
+            "Infravisão",
+            "Resistência à Magia",
+            "Teste de Resistencia",
+            "Inimigos (Orcs, Gobilins e Trolls)"
         ]
     },
-    "Goblin": {
-        custo: -1,
-        descricao: "Pequenos, espertos e muitas vezes mal compreendidos.",
+
+    Elfo: {
+        custo: 1,
         traits: [
-            { nome: "Infravisão", custo: 0, tipo: "vantagem", desc: "Enxerga no escuro." },
-            { nome: "Má Fama", custo: 0, tipo: "desvantagem", desc: "Ninguém confia em goblins." },
-            { nome: "Aptidão para Crime", custo: 0, tipo: "vantagem", desc: "Perícia Crime custa apenas 1 ponto." }
+            "Habilidade +1",
+            "Visão Agulçada",
+            "FA+1 com espada e arco",
+            "Aptidão para Magia Elemental"
+        ]
+    },
+
+    Goblin: {
+        custo: -1,
+        traits: [
+            "Infravisão",
+            "Má Fama",
+            "Aptidão para Crime"
         ]
     }
+
 };

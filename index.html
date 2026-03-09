@@ -6,7 +6,10 @@
     <title>Ficha 3D&T Alpha Digital</title>
     <link rel="stylesheet" href="style.css">
     <script src="pericias.js"></script>
-    <script src="vantagensUnicas.js"></script> ```
+    <script src="vantagensUnicas.js"></script>
+    <script src="vantagens.js"></script>
+    <script src="desvantagens.js"></script>
+    <script src="racasDescricao.js"></script>
     
 </head>
 <body>
@@ -131,7 +134,15 @@
                 </div>
 
                 <div class="box"><label>Tipo de Dano</label><input type="text"></div>
-                <div class="box"><label>Magias Conhecidas</label><textarea rows="3"></textarea></div>
+                
+                <section class="box magias-container">
+                    <div class="box-header">
+                        <label style="color: #4a90e2; font-size: 1.1em;">LIVRO DE MAGIAS</label>
+                        <button type="button" class="btn-add" onclick="addNewSpell()">+</button>
+                    </div>
+
+                    <div id="magias-list" class="dynamic-list"></div>
+                </section>
                 
                 <div class="flex-row">
                     <div class="box small"><label>Dinheiro</label><input type="number" value="0"></div>
@@ -139,12 +150,19 @@
                 </div>
                 <div class="box"><label>História</label><textarea rows="5"></textarea></div>
 
-                <div class="box">
-                    <label>Vantagem Única</label>
-                    <select id="select-vantagem-unica" onchange="applyUniqueAdvantage()">
-                        <option value="">Nenhuma / Humano</option>
-                        </select>
+               <div class="box">
+                <label>Vantagem Única</label>
+
+                <select id="select-vantagem-unica">
+                    <option value="">Nenhuma / Humano</option>
+                </select>
+
+                <!-- DESCRIÇÃO DA RAÇA -->
+                <div id="descricao-raca" class="race-description">
+                    Selecione uma raça para ver a descrição.
                 </div>
+
+            </div>
 
             </section>
 

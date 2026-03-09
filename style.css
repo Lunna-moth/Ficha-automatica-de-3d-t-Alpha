@@ -419,3 +419,47 @@ select:focus {
     border-color: var(--accent);
     outline: none;
 }
+
+.race-description{
+    margin-top:10px;
+    padding:10px;
+    font-size:0.9rem;
+    line-height:1.4;
+    color:#ddd;
+    background:#1e1e1e;
+    border-radius:6px;
+}
+
+/* ============================= */
+/* SISTEMA DE MAGIAS */
+/* ============================= */
+
+.spell-form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+.spell-form-grid .full-width {
+    grid-column: span 2;
+}
+
+.item-header .spell-info-tags {
+    font-size: 0.75em;
+    color: #888;
+    margin-left: 10px;
+}
+
+.magia-branca { 
+    color: #fff; 
+    text-shadow: 0 0 5px #fff; 
+}
+
+.magia-elemental { 
+    color: #f1c40f; 
+}
+
+.magia-negra { 
+    color: #a100ff; 
+}

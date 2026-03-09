@@ -12,6 +12,22 @@ const resInput = document.getElementById('res-input');
 const totalPontosSpan = document.getElementById('total-pontos');
 const pvCurrentInput = document.getElementById("pv-current");
 const pmCurrentInput = document.getElementById("pm-current");
+const selectRaca = document.getElementById("select-vantagem-unica");
+
+// Mostrar descrição da raça
+    function mostrarDescricaoRaca(raca) {
+
+    if (typeof racasDescricao === "undefined") return;
+
+    const descricao = racasDescricao[raca] || "Sem descrição.";
+
+    const descBox = document.getElementById("descricao-raca");
+
+    if (descBox) {
+        descBox.innerText = descricao;
+    }
+
+}
 
 
 function initVantagensUnicas() {
@@ -26,12 +42,25 @@ function initVantagensUnicas() {
     }
 }
 
-function applyUniqueAdvantage() {
+// Listener da raça selecionada
 
+    if (selectRaca !== null) {
+
+        selectRaca.addEventListener("change", () => {
+
+            const raca = selectRaca.value;
+
+            mostrarDescricaoRaca(raca);
+            applyUniqueAdvantage();
+
+        });
+
+    }
+
+function applyUniqueAdvantage() {
     const select = document.getElementById('select-vantagem-unica');
     const racaNome = select.value;
 
-    // LIMPA vantagens de raça antigas
     document.querySelectorAll(".auto-race").forEach(e => e.remove());
 
     if (!racaNome) {
@@ -43,14 +72,27 @@ function applyUniqueAdvantage() {
     const raca = listaVantagensUnicas[racaNome];
     custoVantagemUnica = raca.custo;
 
-    raca.traits.forEach(trait => {
+    raca.traits.forEach(traitNome => {
 
-        const containerId =
-            trait.tipo === 'vantagem'
-            ? 'vantagens-list'
+        // Procura primeiro em vantagens, depois em desvantagens
+        const trait = listaVantagens[traitNome] || listaDesvantagens[traitNome];
+
+        if (!trait) {
+            console.warn("Traço não encontrado:", traitNome);
+            return;
+        }
+
+        // Decide em qual lista colocar
+        const containerId = trait.custo >= 0 
+            ? 'vantagens-list' 
             : 'desvantagens-list';
 
-        injectTrait(containerId, trait.nome, trait.custo, trait.desc);
+       injectTrait(
+            containerId,
+            traitNome,
+            0, // vantagens de raça sempre custam 0
+            trait.desc
+        );
 
     });
 
@@ -120,12 +162,12 @@ function updateAll() {
     
     });
 
-  // 3. Soma Vantagens e Desvantagens
+ // 3. Soma Vantagens e Desvantagens
     document.querySelectorAll(".item-cost").forEach(i => {
         total += parseInt(i.value) || 0;
     });
 
-    // Soma custo da raça
+    // soma custo da raça
     total += custoVantagemUnica;
 
     // Atualiza na tela
@@ -162,16 +204,36 @@ function addNewItem(containerId) {
     const formDiv = document.createElement('div');
     formDiv.className = 'item-accordion item-form-container';
     
+    const isDesvantagem = containerId === 'desvantagens-list';
+    const listaParaUsar = isDesvantagem ? listaDesvantagens : listaVantagens;
+    
+    let options = '<option value="">-- Selecione da Biblioteca --</option>';
+    
+    for (let nome in listaParaUsar) {
+        options += `<option value="${nome}">${nome} (${listaParaUsar[nome].custo} Pts)</option>`;
+    }
+
     formDiv.innerHTML = `
         <div class="item-form">
+
+            <label style="font-size:0.7em;color:#888;">BUSCAR NA BIBLIOTECA</label>
+
+            <select onchange="fillFormFromLibrary(this,'${containerId}')" style="margin-bottom:10px;">
+                ${options}
+            </select>
+
             <div style="display:flex; gap:10px;">
                 <input type="text" placeholder="Nome da Habilidade" class="edit-name" style="flex:2">
                 <input type="number" placeholder="Pts" class="edit-cost" style="flex:1">
             </div>
-            <textarea placeholder="Descrição da habilidade..." class="edit-desc" rows="3"></textarea>
+
+            <textarea placeholder="Descrição..." class="edit-desc" rows="3"></textarea>
+
             <button class="btn-save-item" onclick="saveItem(this)">SALVAR</button>
+
         </div>
     `;
+
     container.appendChild(formDiv);
 }
 
@@ -202,6 +264,29 @@ function saveItem(btn) {
     `;
     
     updateAll(); // Recalcula os pontos gastos
+}
+
+function fillFormFromLibrary(select, containerId) {
+
+    const nome = select.value;
+    if (!nome) return;
+
+    const form = select.closest('.item-form');
+
+    const listaParaUsar =
+        containerId === 'desvantagens-list'
+        ? listaDesvantagens
+        : listaVantagens;
+
+    const item = listaParaUsar[nome];
+
+    if (item) {
+
+        form.querySelector('.edit-name').value = nome;
+        form.querySelector('.edit-cost').value = item.custo;
+        form.querySelector('.edit-desc').value = item.desc;
+
+    }
 }
 
 // Função para abrir/fechar
@@ -299,6 +384,143 @@ window.onclick = (e) => {
 };
 
 // Inicialização
-initVantagensUnicas();
-updateAll();
-renderBars();
+
+    initVantagensUnicas();
+    if (selectRaca && selectRaca.value) {
+        mostrarDescricaoRaca(selectRaca.value);
+    }
+
+    updateAll();
+    renderBars();
+// --- SISTEMA DE MAGIAS ---
+
+function addNewSpell() {
+    const container = document.getElementById('magias-list');
+    const formDiv = document.createElement('div');
+    formDiv.className = 'item-accordion item-form-container';
+    
+    formDiv.innerHTML = `
+        <div class="item-form">
+            <div class="spell-form-grid">
+                <input type="text" placeholder="Nome da Magia" class="edit-spell-name full-width">
+                
+                <div class="input-group">
+                    <label>Escola</label>
+                    <select class="edit-spell-school">
+                        <option value="Magia Branca">Magia Branca</option>
+                        <option value="Magia Elemental">Magia Elemental</option>
+                        <option value="Magia Negra">Magia Negra</option>
+                    </select>
+                </div>
+
+                <div class="input-group">
+                    <label>Custo (PMs)</label>
+                    <input type="number" placeholder="Custo" class="edit-spell-cost">
+                </div>
+
+                <div class="input-group">
+                    <label>Alcance</label>
+                    <select class="edit-spell-range">
+                        <option value="Toque">Toque</option>
+                        <option value="Pessoal">Pessoal</option>
+                        <option value="Curto">Curto</option>
+                        <option value="Longo">Longo</option>
+                        <option value="Visão">Visão</option>
+                    </select>
+                </div>
+
+                <div class="input-group">
+                    <label>Duração</label>
+                    <select class="edit-spell-duration">
+                        <option value="Instantânea">Instantânea</option>
+                        <option value="Sustentável">Sustentável</option>
+                        <option value="Permanente">Permanente</option>
+                    </select>
+                </div>
+            </div>
+            
+            <textarea placeholder="Descrição dos efeitos da magia..." class="edit-spell-desc" rows="3"></textarea>
+            <button class="btn-save-item" onclick="saveSpell(this)">ADICIONAR AO LIVRO</button>
+        </div>
+    `;
+    container.appendChild(formDiv);
+}
+
+function saveSpell(btn) {
+    const container = btn.closest('.item-accordion');
+    const form = btn.closest('.item-form');
+    
+    const data = {
+        name: form.querySelector('.edit-spell-name').value || "Magia Sem Nome",
+        school: form.querySelector('.edit-spell-school').value,
+        cost: form.querySelector('.edit-spell-cost').value || "0",
+        range: form.querySelector('.edit-spell-range').value,
+        duration: form.querySelector('.edit-spell-duration').value,
+        desc: form.querySelector('.edit-spell-desc').value || ""
+    };
+
+    // Define uma cor baseada na escola
+    let schoolClass = "";
+    if(data.school.includes("Negra")) schoolClass = "magia-negra";
+    else if(data.school.includes("Elemental")) schoolClass = "magia-elemental";
+
+    container.classList.remove('item-form-container');
+    container.innerHTML = `
+        <div class="item-header" onclick="toggleAccordion(this)">
+            <span class="arrow">▼</span>
+            <span class="item-title ${schoolClass}">${data.name}</span>
+            <span class="spell-info-tags">${data.school} | ${data.cost} PMs</span>
+        </div>
+        <div class="item-content">
+            <div style="margin-bottom: 10px; font-size: 0.85em; color: #aaa;">
+                <strong>Alcance:</strong> ${data.range} | <strong>Duração:</strong> ${data.duration}
+            </div>
+            <div class="item-description-text">${data.desc}</div>
+            <div class="item-footer">
+                <button class="btn-action-remove" onclick="removeItem(this)">Remover</button>
+                <button class="btn-action-edit" onclick="editSpell(this)">Editar</button>
+            </div>
+        </div>
+        <input type="hidden" class="h-name" value="${data.name}">
+        <input type="hidden" class="h-school" value="${data.school}">
+        <input type="hidden" class="h-cost" value="${data.cost}">
+        <input type="hidden" class="h-range" value="${data.range}">
+        <input type="hidden" class="h-duration" value="${data.duration}">
+    `;
+}
+
+function editSpell(btn) {
+    const accordion = btn.closest('.item-accordion');
+    
+    // Recupera os valores atuais
+    const old = {
+        name: accordion.querySelector('.h-name').value,
+        school: accordion.querySelector('.h-school').value,
+        cost: accordion.querySelector('.h-cost').value,
+        range: accordion.querySelector('.h-range').value,
+        duration: accordion.querySelector('.h-duration').value,
+        desc: accordion.querySelector('.item-description-text').innerText
+    };
+
+    accordion.innerHTML = `
+        <div class="item-form">
+            <div class="spell-form-grid">
+                <input type="text" value="${old.name}" class="edit-spell-name full-width">
+                <select class="edit-spell-school">
+                    <option value="Magia Branca" ${old.school === 'Magia Branca' ? 'selected' : ''}>Magia Branca</option>
+                    <option value="Magia Elemental" ${old.school === 'Magia Elemental' ? 'selected' : ''}>Magia Elemental</option>
+                    <option value="Magia Negra" ${old.school === 'Magia Negra' ? 'selected' : ''}>Magia Negra</option>
+                </select>
+                <input type="number" value="${old.cost}" class="edit-spell-cost">
+                <select class="edit-spell-range">
+                    ${['Toque', 'Pessoal', 'Curto', 'Longo', 'Visão'].map(r => `<option value="${r}" ${old.range === r ? 'selected' : ''}>${r}</option>`).join('')}
+                </select>
+                <select class="edit-spell-duration">
+                    ${['Instantânea', 'Sustentável', 'Permanente'].map(d => `<option value="${d}" ${old.duration === d ? 'selected' : ''}>${d}</option>`).join('')}
+                </select>
+            </div>
+            <textarea class="edit-spell-desc" rows="3">${old.desc}</textarea>
+            <button class="btn-save-item" onclick="saveSpell(this)">SALVAR ALTERAÇÕES</button>
+        </div>
+    `;
+}
