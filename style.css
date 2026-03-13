@@ -463,3 +463,30 @@ select:focus {
 .magia-negra { 
     color: #a100ff; 
 }
+
+#system-warning{
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+
+    background: #8b0000;
+    color: white;
+
+    padding: 12px 20px;
+    border-radius: 8px;
+
+    font-weight: bold;
+    font-size: 14px;
+
+    opacity: 0;
+    pointer-events: none;
+
+    transition: opacity 0.3s ease;
+
+    z-index: 9999;
+}
+
+#system-warning.show{
+    opacity: 1;
+}

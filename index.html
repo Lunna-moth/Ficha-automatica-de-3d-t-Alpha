@@ -16,6 +16,7 @@
     <script src="racasDescricao.js"></script>
     <script src="/LOGS/logracas.js"></script>
     <script src="/LOGS/logmaigas.js"></script>
+    <script src="patamar.js"></script>
 
     
 </head>
@@ -36,6 +37,19 @@
                     <label>PONTOS GASTOS:</label>
                     <span id="total-pontos">0</span>
                 </div>
+
+                <select id="select-patamar" onchange="setPatamar(this.value)">
+                    <option value="pessoa-comum">Pessoa Comum</option>
+                    <option value="novato" selected>Novato</option>
+                    <option value="lutador">Lutador</option>
+                    <option value="campeao">Campeão</option>
+                    <option value="lenda">Lenda</option>
+                </select>
+
+                <div>
+                    Pontos restantes: <span id="pontos-restantes">5</span>
+                </div>
+
             </div>
         </header>
 
@@ -184,6 +198,8 @@
             <div id="modal-body" class="modal-body"></div>
         </div>
     </div>
+
+    <div id="system-warning"></div>
 
     <script src="script.js"></script>
 </body>

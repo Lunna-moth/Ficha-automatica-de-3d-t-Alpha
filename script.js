@@ -13,7 +13,8 @@ if (selectRaca) {
     });
 }
 
-function updateAll() {
+function updateAll(event) {
+
     let total = 0;
 
     // 1. Soma atributos
@@ -24,25 +25,38 @@ function updateAll() {
     // 2. Soma perícias
     total += calcularPericias();
 
- // 3. Soma Vantagens e Desvantagens
+    // 3. Soma vantagens/desvantagens
     document.querySelectorAll(".item-cost").forEach(i => {
         total += parseInt(i.value) || 0;
     });
 
-    // soma custo da raça
+    // 4. soma custo da raça
     total += custoVantagemUnica;
 
-    // Atualiza na tela
+    // 5. valida limites do patamar
+    if (typeof validarLimites === "function") {
+
+        const ultimoInput = event ? event.target : null;
+
+        if (!validarLimites(total, ultimoInput)) {
+            updateAll(); 
+            return;
+        }
+    }
+
+    // 6. Atualiza total gasto
     totalPontosSpan.textContent = total;
 
-    // 4. Atualiza PV/PM
+    // 7. Sistema de patamar
+    if (typeof renderPatamar === "function") {
+        renderPatamar(total);
+    }
+
+    // 8. Atualiza PV/PM
     calcularPVPM(resInput, pvCurrentInput, pmCurrentInput);
 
     renderBars(pvCurrentInput, pmCurrentInput);
-    }
-
-
-// Função para Salvar e transformar em Accordion
+}
 
 // Função para abrir/fechar
 function toggleAccordion(header) {
@@ -81,6 +95,21 @@ function changeCurrent(type, amount) {
     changePVPM(type, amount, pvCurrentInput, pmCurrentInput);
 }
 
+function showWarning(text){
+
+    const el = document.getElementById("system-warning");
+
+    if(!el) return;
+
+    el.textContent = text;
+
+    el.classList.add("show");
+
+    setTimeout(()=>{
+        el.classList.remove("show");
+    },3000);
+}
+
 // Modal
 function showSkillDescription(skillName) {
 
@@ -99,7 +128,7 @@ function closeModal() {
 }
 
 // Listeners
-attrInputs.forEach(input => input.addEventListener('input', updateAll));
+attrInputs.forEach(input => input.addEventListener('input', (e) => updateAll(e)));
 
 pvCurrentInput.addEventListener("input", () => renderBars(pvCurrentInput, pmCurrentInput));
 pmCurrentInput.addEventListener("input", () => renderBars(pvCurrentInput, pmCurrentInput));
@@ -118,71 +147,6 @@ window.onclick = (e) => {
     updateAll();
     renderBars();
 // --- SISTEMA DE MAGIAS ---
-
-function addNewSpell() {
-    const container = document.getElementById('magias-list');
-    const formDiv = document.createElement('div');
-    formDiv.className = 'item-accordion item-form-container';
-    
-    formDiv.innerHTML = `
-        <div class="item-form">
-            <div class="spell-form-grid">
-                <input type="text" placeholder="Nome da Magia" class="edit-spell-name full-width">
-                
-                <div class="input-group">
-                    <label>Escola</label>
-                    <select class="edit-spell-school">
-                        <option value="Magia Branca">Magia Branca</option>
-                        <option value="Magia Elemental">Magia Elemental</option>
-                        <option value="Magia Negra">Magia Negra</option>
-                    </select>
-                </div>
-
-                <div class="input-group">
-                    <label>Custo (PMs)</label>
-                    <input type="number" placeholder="Custo" class="edit-spell-cost">
-                </div>
-
-                <div class="input-group">
-                    <label>Alcance</label>
-                    <select class="edit-spell-range">
-                        <option value="Toque">Toque</option>
-                        <option value="Pessoal">Pessoal</option>
-                        <option value="Curto">Curto</option>
-                        <option value="Longo">Longo</option>
-                        <option value="Visão">Visão</option>
-                    </select>
-                </div>
-
-                <div class="input-group">
-                    <label>Duração</label>
-                    <select class="edit-spell-duration">
-                        <option value="Instantânea">Instantânea</option>
-                        <option value="Sustentável">Sustentável</option>
-                        <option value="Permanente">Permanente</option>
-                    </select>
-                </div>
-            </div>
-            
-            <textarea placeholder="Descrição dos efeitos da magia..." class="edit-spell-desc" rows="3"></textarea>
-            <button class="btn-save-item" onclick="saveSpell(this)">ADICIONAR AO LIVRO</button>
-        </div>
-    `;
-    container.appendChild(formDiv);
-}
-
-function saveSpell(btn) {
-    const container = btn.closest('.item-accordion');
-    const form = btn.closest('.item-form');
-    
-    const data = {
-        name: form.querySelector('.edit-spell-name').value || "Magia Sem Nome",
-        school: form.querySelector('.edit-spell-school').value,
-        cost: form.querySelector('.edit-spell-cost').value || "0",
-        range: form.querySelector('.edit-spell-range').value,
-        duration: form.querySelector('.edit-spell-duration').value,
-        desc: form.querySelector('.edit-spell-desc').value || ""
-    };
 
     // Define uma cor baseada na escola
     let schoolClass = "";
@@ -212,40 +176,3 @@ function saveSpell(btn) {
         <input type="hidden" class="h-range" value="${data.range}">
         <input type="hidden" class="h-duration" value="${data.duration}">
     `;
-}
-
-function editSpell(btn) {
-    const accordion = btn.closest('.item-accordion');
-    
-    // Recupera os valores atuais
-    const old = {
-        name: accordion.querySelector('.h-name').value,
-        school: accordion.querySelector('.h-school').value,
-        cost: accordion.querySelector('.h-cost').value,
-        range: accordion.querySelector('.h-range').value,
-        duration: accordion.querySelector('.h-duration').value,
-        desc: accordion.querySelector('.item-description-text').innerText
-    };
-
-    accordion.innerHTML = `
-        <div class="item-form">
-            <div class="spell-form-grid">
-                <input type="text" value="${old.name}" class="edit-spell-name full-width">
-                <select class="edit-spell-school">
-                    <option value="Magia Branca" ${old.school === 'Magia Branca' ? 'selected' : ''}>Magia Branca</option>
-                    <option value="Magia Elemental" ${old.school === 'Magia Elemental' ? 'selected' : ''}>Magia Elemental</option>
-                    <option value="Magia Negra" ${old.school === 'Magia Negra' ? 'selected' : ''}>Magia Negra</option>
-                </select>
-                <input type="number" value="${old.cost}" class="edit-spell-cost">
-                <select class="edit-spell-range">
-                    ${['Toque', 'Pessoal', 'Curto', 'Longo', 'Visão'].map(r => `<option value="${r}" ${old.range === r ? 'selected' : ''}>${r}</option>`).join('')}
-                </select>
-                <select class="edit-spell-duration">
-                    ${['Instantânea', 'Sustentável', 'Permanente'].map(d => `<option value="${d}" ${old.duration === d ? 'selected' : ''}>${d}</option>`).join('')}
-                </select>
-            </div>
-            <textarea class="edit-spell-desc" rows="3">${old.desc}</textarea>
-            <button class="btn-save-item" onclick="saveSpell(this)">SALVAR ALTERAÇÕES</button>
-        </div>
-    `;
-}
